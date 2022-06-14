@@ -1,4 +1,0 @@
-#!/bin/sh
-
-SOCKET=$(ls /tmp/alfred-runtime/sway-ipc.*)
-swaymsg -s $SOCKET "$@"
