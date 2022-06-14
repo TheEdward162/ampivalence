@@ -1,0 +1,27 @@
+#!/bin/sh
+
+mkdir -p /run/udev/data
+cat >/run/udev/data/c13:64 <<EOF
+S:input/by-id/usb-WaveShare_WS170120_WaveShare_ws170120-event-if00
+S:input/by-path/platform-3f980000.usb-usb-0:1:1.0-event
+I:2192410526
+E:ID_BUS=usb
+E:ID_INPUT=1
+E:ID_INPUT_TOUCHSCREEN=1
+E:ID_MODEL=WS170120
+E:ID_MODEL_ENC=WS170120
+E:ID_MODEL_ID=0005
+E:ID_PATH=platform-3f980000.usb-usb-0:1:1.0
+E:ID_PATH_TAG=platform-3f980000_usb-usb-0_1_1_0
+E:ID_REVISION=0200
+E:ID_SERIAL=WaveShare_WS170120_WaveShare_ws170120
+E:ID_SERIAL_SHORT=WaveShare_ws170120
+E:ID_TYPE=hid
+E:ID_USB_DRIVER=usbhid
+E:ID_USB_INTERFACES=:030000:
+E:ID_USB_INTERFACE_NUM=00
+E:ID_VENDOR=WaveShare
+E:ID_VENDOR_ENC=WaveShare
+E:ID_VENDOR_ID=0eef
+E:LIBINPUT_DEVICE_GROUP=3/eef/5:usb-3f980000.usb-1
+EOF

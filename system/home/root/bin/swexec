@@ -1,0 +1,4 @@
+#!/bin/sh
+
+name=$(basename $1)
+swmsg exec "$* >/tmp/$name.log 2>&1"
