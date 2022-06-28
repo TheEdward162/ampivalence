@@ -1,5 +1,8 @@
 #!/bin/sh
 
-scp -r home/root/.profile home/root/bin ampivalence:/home/root/
+MY_PATH=$(realpath $0)
+BASE_PATH=$(dirname $MY_PATH)
 
-scp -r home/alfred/.profile home/alfred/.config ampivalence:/home/alfred/
+scp -r "$BASE_PATH/home/root/.profile" "$BASE_PATH/home/root/bin" ampivalence:/home/root/
+
+scp -r "$BASE_PATH/home/alfred/.profile" "$BASE_PATH/home/alfred/.config" ampivalence:/home/alfred/

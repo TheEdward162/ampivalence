@@ -1,0 +1,6 @@
+[submodule "kmscube"]
+	path = kmscube
+	url = ./kmscube
+[submodule "khronos-egl"]
+	path = khronos-egl
+	url = ./khronos-egl

@@ -1,0 +1,3 @@
+[target.aarch64-unknown-linux-musl]
+linker = "aarch64-musl-gcc-hack"
+rustflags = ["-C", "target-feature=-crt-static", "-L", "./sysroot/usr/lib"]
