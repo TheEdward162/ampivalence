@@ -2,3 +2,6 @@
 members = [
 	"test_kmscube"
 ]
+
+[patch.crates-io]
+drm = { path = "../../../Temporary/drm-rs" }

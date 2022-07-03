@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+bytemuck = "1.10"
 
-#drm = { version = "0.6" }
-drm = { git = "https://github.com/TheEdward162/drm-rs.git" }
+drm = { version = "0.6" }
 gbm = { version = "0.8", features = ["drm-support"] }
 
 khronos-egl = { version = "4.1", features = ["dynamic"] }
@@ -15,4 +15,4 @@ gl = "0.14"
 
 anyhow = "1"
 log = "0.4"
-edwardium_logger = { version = "1.2.1", default-features = false, features = ["std", "colored_stderr_output"] }
+edwardium_logger = { version = "1.2.2", default-features = false, features = ["std", "colored_stderr_output"] }

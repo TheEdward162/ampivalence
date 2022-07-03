@@ -4,9 +4,9 @@ version = 3
 
 [[package]]
 name = "anyhow"
-version = "1.0.57"
+version = "1.0.58"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08f9b8508dccb7687a1d6c4ce66b2b0ecef467c94667de27d8d7fe1f8d2a9cdc"
+checksum = "bb07d2053ccdbe10e2af2995a2f116c1330396493dc1269f6a91d0ae82e19704"
 
 [[package]]
 name = "autocfg"
@@ -22,8 +22,9 @@ checksum = "cf1de2fe8c75bc145a2f577add951f8134889b4795d47466a54a5c846d691693"
 
 [[package]]
 name = "bytemuck"
-version = "1.9.1"
-source = "git+https://github.com/TheEdward162/bytemuck#f7a8349eff81c2707d0f4c1781ffca2ee43a56a1"
+version = "1.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c53dfa917ec274df8ed3c572698f381a24eef2efba9492d797301b72b6db408a"
 dependencies = [
  "bytemuck_derive",
 ]
@@ -60,44 +61,20 @@ checksum = "9ea835d29036a4087793836fa931b08837ad5e957da9e23886b29586fb9b6650"
 [[package]]
 name = "drm"
 version = "0.6.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "408e87132bd0d8a13a3b418b9d51fb92973b764d1d40785947d233ab2945fd27"
-dependencies = [
- "bitflags",
- "drm-ffi 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "drm-fourcc",
- "nix 0.22.3",
-]
-
-[[package]]
-name = "drm"
-version = "0.6.2"
-source = "git+https://github.com/TheEdward162/drm-rs.git#2faf14e0b71567f751eaf0a0e5835f2e36c87811"
 dependencies = [
  "bitflags",
  "bytemuck",
- "drm-ffi 0.2.1 (git+https://github.com/TheEdward162/drm-rs.git)",
+ "drm-ffi",
  "drm-fourcc",
- "nix 0.23.1",
+ "nix 0.24.1",
 ]
 
 [[package]]
 name = "drm-ffi"
 version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "198d1b7fdb33b75e9bd08ba6842ddb730760f7eeea25552acc88c5403c4f0652"
 dependencies = [
- "drm-sys 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "nix 0.22.3",
-]
-
-[[package]]
-name = "drm-ffi"
-version = "0.2.1"
-source = "git+https://github.com/TheEdward162/drm-rs.git#2faf14e0b71567f751eaf0a0e5835f2e36c87811"
-dependencies = [
- "drm-sys 0.1.2 (git+https://github.com/TheEdward162/drm-rs.git)",
- "nix 0.23.1",
+ "drm-sys",
+ "nix 0.24.1",
 ]
 
 [[package]]
@@ -109,25 +86,15 @@ checksum = "0aafbcdb8afc29c1a7ee5fbe53b5d62f4565b35a042a662ca9fecd0b54dae6f4"
 [[package]]
 name = "drm-sys"
 version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f5f45fcdd3b2f3c13fadea11b2a4eda2023e7de55021da039eac4a3beecfe91c"
-dependencies = [
- "libc",
-]
-
-[[package]]
-name = "drm-sys"
-version = "0.1.2"
-source = "git+https://github.com/TheEdward162/drm-rs.git#2faf14e0b71567f751eaf0a0e5835f2e36c87811"
 dependencies = [
  "libc",
 ]
 
 [[package]]
 name = "edwardium_logger"
-version = "1.2.1"
+version = "1.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e8b353d0fd95e44ed9bf445b1319e012c243e7d169e50c1b1aa362186afcedb6"
+checksum = "34e53bf91f7f4d897ab8842c088462a1ab931c29d039fa5cee4b35637262d911"
 dependencies = [
  "log",
  "termion",
@@ -140,7 +107,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "06678321b809dfa34ca3be8ac2cb91b22116f86ba37b1610a752eaf90594c450"
 dependencies = [
  "bitflags",
- "drm 0.6.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "drm",
  "drm-fourcc",
  "gbm-sys",
  "libc",
@@ -241,28 +208,13 @@ dependencies = [
 
 [[package]]
 name = "nix"
-version = "0.22.3"
+version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e4916f159ed8e5de0082076562152a76b7a1f64a01fd9d1e0fea002c37624faf"
+checksum = "8f17df307904acd05aa8e32e97bb20f2a0df1728bbc2d771ae8f9a90463441e9"
 dependencies = [
  "bitflags",
- "cc",
  "cfg-if",
  "libc",
- "memoffset",
-]
-
-[[package]]
-name = "nix"
-version = "0.23.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f866317acbd3a240710c63f065ffb1e4fd466259045ccb504130b7f668f35c6"
-dependencies = [
- "bitflags",
- "cc",
- "cfg-if",
- "libc",
- "memoffset",
 ]
 
 [[package]]
@@ -285,18 +237,18 @@ checksum = "1df8c4ec4b0627e53bdf214615ad287367e482558cf84b109250b37464dc03ae"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.39"
+version = "1.0.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c54b25569025b7fc9651de43004ae593a75ad88543b17178aa5e1b9c4f15f56f"
+checksum = "dd96a1e8ed2596c337f8eae5f24924ec83f5ad5ab21ea8e455d3566c69fbcaf7"
 dependencies = [
  "unicode-ident",
 ]
 
 [[package]]
 name = "quote"
-version = "1.0.18"
+version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1feb54ed693b93a84e14094943b84b7c4eae204c512b7ccb95ab0c66d278ad1"
+checksum = "3bcdf212e9776fbcb2d23ab029360416bb1706b1aea2d1a5ba002727cbcab804"
 dependencies = [
  "proc-macro2",
 ]
@@ -321,9 +273,9 @@ dependencies = [
 
 [[package]]
 name = "smallvec"
-version = "1.8.0"
+version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f2dd574626839106c320a323308629dcb1acfc96e32a8cba364ddc61ac23ee83"
+checksum = "2fd0db749597d91ff862fd1d55ea87f7855a744a8425a64695b6fca237d1dad1"
 
 [[package]]
 name = "syn"
@@ -353,7 +305,8 @@ name = "test_kmscube"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "drm 0.6.2 (git+https://github.com/TheEdward162/drm-rs.git)",
+ "bytemuck",
+ "drm",
  "edwardium_logger",
  "gbm",
  "gl",

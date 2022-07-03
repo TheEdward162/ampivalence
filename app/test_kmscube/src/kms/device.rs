@@ -1,24 +1,28 @@
-use std::{fs, path::Path, iter, os::unix::prelude::{AsRawFd, RawFd}};
+use std::{fs, path::Path, iter, rc::Rc};
 
 use anyhow::Context;
+
 use drm::{
 	Device,
-	ClientCapability,
 	control::{
 		Device as ControlDevice,
 		Mode, ModeTypeFlags,
 		connector::{Handle as ConnectorHandle, State as ConnectorState, Info as ConnectorInfo},
 		encoder::{Handle as EncoderHandle, Info as EncoderInfo},
 		crtc::{Handle as CrtcHandle, Info as CrtcInfo},
-		plane::{Info as PlaneInfo},
-		property::{Value as PropertyValue}
+		plane::Info as PlaneInfo,
+		property::Value as PropertyValue,
 	}
 };
-use gbm::Device as GbmDevice;
 
-struct IndexedCrtc {
+pub struct IndexedCrtc {
 	pub info: CrtcInfo,
 	pub index: usize
+}
+impl IndexedCrtc {
+	pub fn handle(&self) -> CrtcHandle {
+		self.info.handle()
+	}
 }
 impl std::fmt::Debug for IndexedCrtc {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -27,9 +31,16 @@ impl std::fmt::Debug for IndexedCrtc {
     }
 }
 
-struct DrmDevice(fs::File);
+#[derive(Clone)]
+pub struct DrmDevice(Rc<fs::File>);
 impl DrmDevice {
-	fn choose_connector(&self, connectors: &[ConnectorHandle]) -> anyhow::Result<ConnectorInfo> {
+	pub fn new<P: AsRef<Path>>(path: P) -> std::io::Result<Self> {
+		fs::OpenOptions::new().read(true).write(true).open(path).map(
+			|file| Self(Rc::new(file))
+		)
+	}
+
+	pub fn choose_connector(&self, connectors: &[ConnectorHandle]) -> anyhow::Result<ConnectorInfo> {
 		let mut chosen = None;
 		let mut found_multiple = false;
 
@@ -59,25 +70,30 @@ impl DrmDevice {
 		}
 	}
 
-	fn choose_mode(&self, modes: &[Mode]) -> anyhow::Result<Mode> {
+	pub fn choose_mode(&self, modes: &[Mode]) -> anyhow::Result<Mode> {
 		let mut chosen = None;
 		
 		for &mode in modes {
 			log::trace!(
-				"Mode: \"{}\" {}x{}@{} [{:?}]",
+				"Mode: \"{}\" {}x{}@{} [{:?}][{:?}]",
 				mode.name().to_str().unwrap_or("<Unknown>"),
 				mode.size().0, mode.size().1,
 				mode.vrefresh(),
-				mode.mode_type()
+				mode.mode_type(),
+				mode.flags()
 			);
 
 			chosen = match chosen.take() {
 				None => Some(mode),
 				Some(current) => {
-					if mode.mode_type().contains(ModeTypeFlags::PREFERRED) {
+					if current.mode_type().contains(ModeTypeFlags::USERDEF | ModeTypeFlags::DRIVER) {
+						Some(current)
+					} else if mode.mode_type().contains(ModeTypeFlags::USERDEF | ModeTypeFlags::DRIVER) {
 						Some(mode)
 					} else if current.mode_type().contains(ModeTypeFlags::PREFERRED) {
 						Some(current)
+					} else if mode.mode_type().contains(ModeTypeFlags::PREFERRED) {
+						Some(mode)
 					} else {
 						let mode_area = mode.size().0 * mode.size().1;
 						let current_area = current.size().0 * current.size().1;
@@ -100,18 +116,19 @@ impl DrmDevice {
 			None => Err(anyhow::anyhow!("Did not find any modes for chosen connector")),
 			Some(mode) => {
 				log::info!(
-					"Choosing mode: \"{}\" {}x{}@{} [{:?}]",
+					"Choosing mode: \"{}\" {}x{}@{} [{:?}][{:?}]",
 					mode.name().to_str().unwrap_or("<Unknown>"),
 					mode.size().0, mode.size().1,
 					mode.vrefresh(),
-					mode.mode_type()
+					mode.mode_type(),
+					mode.flags()
 				);
 				Ok(mode)
 			}
 		}
 	}
 
-	fn choose_crtc(
+	pub fn choose_crtc(
 		&self,
 		current_encoder: Option<EncoderHandle>,
 		encoders: &[Option<EncoderHandle>],
@@ -186,7 +203,7 @@ impl DrmDevice {
 		}
 	}
 
-	fn choose_plane(&self, crtc: &IndexedCrtc) -> anyhow::Result<PlaneInfo> {
+	pub fn choose_plane(&self, crtc: &IndexedCrtc) -> anyhow::Result<PlaneInfo> {
 		let mut chosen = None;
 		
 		let planes = self.plane_handles().context("Failed to query plane resources")?;
@@ -216,7 +233,7 @@ impl DrmDevice {
 							Ok("Primary") => { is_primary = true; }
 							_ => ()
 						},
-						_ => { log::warn!("Unpexpected value type for property \"type\""); }
+						_ => { log::warn!("Unexpected value type for property \"type\""); }
 					},
 					_ => ()
 				}
@@ -258,38 +275,3 @@ impl std::os::unix::io::AsRawFd for DrmDevice {
 }
 impl Device for DrmDevice {}
 impl ControlDevice for DrmDevice {}
-
-pub struct DrmContext {
-	device: GbmDevice<DrmDevice>,
-	connector: ConnectorInfo,
-	mode: Mode,
-	crtc: IndexedCrtc,
-	plane: PlaneInfo
-}
-impl DrmContext {
-	pub fn new<P: AsRef<Path>>(path: P) -> anyhow::Result<Self> {
-		let file = fs::OpenOptions::new().read(true).write(true).open(path).context("Failed to open drm device")?;
-
-		let device = GbmDevice::new(DrmDevice(file)).context("Failed to create gbm device")?;
-
-		let resource_handles = device.resource_handles().context("Failed to query control device resources")?;
-		let connector = device.choose_connector(resource_handles.connectors())?;
-		let mode = device.choose_mode(connector.modes())?;
-		let crtc = device.choose_crtc(
-			connector.current_encoder(),
-			connector.encoders(),
-			resource_handles.crtcs()
-		)?;
-
-		device.set_client_capability(ClientCapability::Atomic, true).context("Failed to set Atomic client capability")?;
-		let plane = device.choose_plane(&crtc)?;
-		
-		Ok(DrmContext {
-			device,
-			connector,
-			mode,
-			crtc,
-			plane
-		})
-	}
-}
