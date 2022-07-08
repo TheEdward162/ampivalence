@@ -22,7 +22,7 @@ mod device;
 mod framebuffer;
 
 use device::{DrmDevice, IndexedCrtc};
-use framebuffer::FrameBufferObject;
+pub use framebuffer::FrameBufferObject;
 
 struct CommitPropertyCache {
 	/// connector property `CRTC_ID`
@@ -348,15 +348,15 @@ impl KmsSwapchain {
 		self.current_index = (self.current_index + 1) % self.framebuffers.len();
 	}
 
-	pub fn current_framebuffer(&mut self) -> &mut FrameBufferObject {
-		&mut self.framebuffers[self.current_index]
+	pub fn current_framebuffer(&self) -> (usize, &FrameBufferObject) {
+		(self.current_index, &self.framebuffers[self.current_index])
 	}
 
 	pub fn present(
 		&mut self,
 		context: &KmsContext
 	) -> anyhow::Result<()> {
-		context.atomic_commit(self.is_first_frame, self.current_framebuffer())?;
+		context.atomic_commit(self.is_first_frame, self.current_framebuffer().1)?;
 		self.is_first_frame = false;
 
 		Ok(())

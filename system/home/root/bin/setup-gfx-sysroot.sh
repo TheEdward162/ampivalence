@@ -13,6 +13,6 @@ cp -r /etc/apk/keys $SYSROOT/etc/apk/keys
 apk add --initdb --repositories-file /etc/apk/repositories --root $SYSROOT mesa-gbm mesa-egl mesa-dri-gallium mesa-dev
 
 # for /usr/lib/xorg/modules/dri/vc4_dri.so which MESA-LOADER cannot find
-ln -sf $SYSROOT/usr/lib/xorg /usr/lib/xorg
+# ln -sf $SYSROOT/usr/lib/xorg /usr/lib/xorg USE LIBGL_DRIVERS_PATH="${GFX_SYSROOT}/usr/lib/xorg/modules/dri" instead
 
 # then launch app with LD_LIBRARY_PATH=/media/mmcblk0p2/gfx-sysroot/usr/lib <app>

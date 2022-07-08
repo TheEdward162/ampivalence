@@ -28,7 +28,7 @@ impl FrameBufferObject {
 
 		let buffer = device.create_buffer_object(
 			mode.size().0 as u32, mode.size().1 as u32,
-			format, BufferObjectFlags::RENDERING | BufferObjectFlags::SCANOUT | BufferObjectFlags::WRITE
+			format, BufferObjectFlags::RENDERING | BufferObjectFlags::SCANOUT
 		).context("Failed to create buffer object")?;
 
 		let framebuffer = device.add_planar_framebuffer(
@@ -46,8 +46,8 @@ impl FrameBufferObject {
 		)
 	}
 
-	pub fn buffer_mut(&mut self) -> &mut BufferObject<()> {
-		&mut self.buffer
+	pub fn buffer(&self) -> &BufferObject<()> {
+		&self.buffer
 	}
 
 	pub fn framebuffer(&self) -> FramebufferHandle {

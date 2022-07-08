@@ -9,9 +9,8 @@ bytemuck = "1.10"
 drm = { version = "0.6" }
 gbm = { version = "0.8", features = ["drm-support"] }
 
+# gl = "0.14"
 khronos-egl = { version = "4.1", features = ["dynamic"] }
-
-gl = "0.14"
 
 anyhow = "1"
 log = "0.4"
